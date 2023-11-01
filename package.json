@@ -1,5 +1,5 @@
 {
-  "name": "@tic",
+  "name": "@tic/base",
   "version": "0.1.0",
   "description": "TIC monorepo",
   "repository": "https://github.com/DD-AG3NCY/The-Internet-Confederation.git",
