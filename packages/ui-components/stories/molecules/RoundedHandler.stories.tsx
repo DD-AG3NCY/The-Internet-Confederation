@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import RoundedHandler from "ui-components/components/molecules/handlers/RoundedHandler";
 import { ThemedIconRenderer } from "ui-components/components/atoms";
-import { FullOrbIcon } from "ui-components/icons";
+import { InfoIcon } from "ui-components/icons";
 
 const meta: Meta<typeof RoundedHandler> = {
 	title: "molecules/RoundedHandler",
@@ -11,7 +11,7 @@ const meta: Meta<typeof RoundedHandler> = {
 	args: {
 		icon: (
 			<ThemedIconRenderer
-				icon={FullOrbIcon}
+				icon={InfoIcon}
 				theme="citizen"
 				size="small"
 				background={false}
