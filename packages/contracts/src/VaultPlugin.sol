@@ -12,7 +12,7 @@ import {
 
 /**
  * @title ERC4626 Vault Plugin
- * @author pythonpete32
+ * @author The-Internet-Confederation: (@pythonpete32)
  * @notice This contract is an ERC4626 vault that uses an Aragon DAO for storage and management of the underlying asset.
  * It introduces a transfer toggle feature, allowing the DAO to enable or disable transfers of the token.
  *

@@ -6,7 +6,11 @@ import { PermissionLib } from "@aragon/osx/core/permission/PermissionLib.sol";
 import { PluginSetup, IPluginSetup } from "@aragon/osx/framework/plugin/setup/PluginSetup.sol";
 import { VaultPlugin } from "./VaultPlugin.sol";
 
-/// @title VaultPluginSetup build 1
+/**
+ * @title VaultPluginSetup
+ * @author The-Internet-Confederation: (@pythonpete32)
+ * @notice build 1
+ */
 contract VaultPluginSetup is PluginSetup {
     address private immutable IMPLEMEMTATION;
 
