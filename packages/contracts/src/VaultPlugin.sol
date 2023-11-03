@@ -20,16 +20,20 @@ import {
  * `transfersEnabled` which can be toggled to enable or disable transfers of the token. This is in addition to the
  * standard ERC4626 functionality.
  *
- * The contract also overrides several methods from the base contracts to integrate with a DAO. The DAO's address is
- * used instead of the contract's own address when interacting with the token. This means that the token balance is
- * held by the DAO, not the contract itself. The redeem feature is maintained, allowing depositors to claim their
- * pro-rata share of the underlying assets.
+ * The contract also overrides several methods from the base contracts to integrate with a DAO. The token balance is of
+ * the deposit asset is held by the DAO, not the VaultPlugin contract itself enabling the DAO to use the deposit asset
+ * as
+ * it sees fit. The redeem feature is maintained, allowing depositors to claim their pro-rata share of the underlying
+ * assets.
  */
 contract VaultPlugin is PluginUUPSUpgradeable, ERC4626Upgradeable {
+    /// @notice Permission ID for toggling transfers
     bytes32 public constant TOGGLE_TRANSFER_PERMISSION_ID = keccak256("TOGGLE_TRANSFER_PERMISSION");
 
+    /// @notice A boolean flag to indicate if transfers are enabled or not
     bool public transfersEnabled;
 
+    /// @dev Emitted when transfers are disabled
     error TransfersDisabled();
 
     /// @notice Initializes the plugin when build 1 is installed.
@@ -39,16 +43,25 @@ contract VaultPlugin is PluginUUPSUpgradeable, ERC4626Upgradeable {
         __ERC4626_init(_asset);
     }
 
+    /// @notice Toggles the state of transfers
+    /// @dev This function can only be called by an account with the `TOGGLE_TRANSFER_PERMISSION_ID` permission
     function toggleTransfers() external auth(TOGGLE_TRANSFER_PERMISSION_ID) {
         transfersEnabled = !transfersEnabled;
     }
 
-    // the assets are in the dao not this contract
+    /// @notice Returns the total assets held by the DAO
+    /// @dev See {IERC4626-totalAssets}.
     function totalAssets() public view virtual override returns (uint256) {
         return IERC20MetadataUpgradeable(asset()).balanceOf(address(dao()));
     }
 
-    // the assets are in the dao not this contract
+    /// @notice Overrides the _deposit function from the ERC4626 contract to deposit assets into the DAO instead of this
+    /// contract.
+    /// @dev See {IERC4626-_deposit}.
+    /// @param caller The address of the caller.
+    /// @param receiver The address of the receiver.
+    /// @param assets The amount of assets to deposit.
+    /// @param shares The amount of shares to issue.
     function _deposit(address caller, address receiver, uint256 assets, uint256 shares) internal virtual override {
         // If _asset is ERC777, `transferFrom` can trigger a reenterancy BEFORE the transfer happens through the
         // `tokensToSend` hook. On the other hand, the `tokenReceived` hook, that is triggered after the transfer,
@@ -68,6 +81,14 @@ contract VaultPlugin is PluginUUPSUpgradeable, ERC4626Upgradeable {
         emit Deposit(caller, receiver, assets, shares);
     }
 
+    /// @notice Overrides the _withdraw function from the ERC4626 contract to withdraw assets from the DAO instead of
+    /// this contract.
+    /// @dev See {IERC4626-_withdraw}.
+    /// @param caller The address of the caller.
+    /// @param receiver The address of the receiver.
+    /// @param owner The address of the owner.
+    /// @param assets The amount of assets to withdraw.
+    /// @param shares The amount of shares to burn.
     function _withdraw(
         address caller,
         address receiver,
@@ -95,6 +116,9 @@ contract VaultPlugin is PluginUUPSUpgradeable, ERC4626Upgradeable {
         emit Withdraw(caller, receiver, owner, assets, shares);
     }
 
+    /// @notice Overrides the transfer function from the ERC20Upgradeable contract.
+    /// @dev See {IERC4626-transfer}. This override is necessary to ensure that transfers are only
+    /// allowed when they are enabled.
     function transfer(
         address to,
         uint256 amount
@@ -111,13 +135,18 @@ contract VaultPlugin is PluginUUPSUpgradeable, ERC4626Upgradeable {
         return true;
     }
 
+    /// @dev Withdraws the specified amount of assets from the DAO to the specified address.
+    /// @param to The address to transfer the assets to.
+    /// @param assets The amount of assets to withdraw.
     function _withdrawFromDao(address to, uint256 assets) internal {
+        // Create a new action to be executed by the DAO
         IDAO.Action[] memory action = new IDAO.Action[](1);
         action[0] = IDAO.Action({
             to: asset(),
             value: 0,
             data: abi.encodeWithSignature("transfer(address,uint256)", to, assets)
         });
+        // Execute the action
         dao().execute({ _callId: bytes32(abi.encodePacked(to, assets)), _actions: action, _allowFailureMap: 0 });
     }
 
