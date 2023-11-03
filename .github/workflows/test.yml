@@ -27,8 +27,10 @@ jobs:
           forge --version
           forge build --sizes
         id: build
+        working-directory: ./packages/contracts
 
       - name: Run Forge tests
         run: |
           forge test -vvv
         id: test
+        working-directory: ./packages/contracts
