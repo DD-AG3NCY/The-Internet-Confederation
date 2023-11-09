@@ -1,0 +1,16 @@
+{
+  "name": "dao-deploy",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aragon/sdk-client": "^1.19.0",
+    "@aragon/sdk-client-common": "^1.11.0",
+    "ethers": "5"
+  }
+}

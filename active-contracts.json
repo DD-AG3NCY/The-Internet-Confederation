@@ -1,0 +1,18 @@
+{
+    "goerli": {
+        "VaultPluginSetup": "0xefAfFBDf03f6Fc4eDFAf87F62aE76Ac5Bbc9D089",
+        "tec-vault.plugin.dao.eth": "0x1d7e9D43303fbfAA5062cf6BaE5dcF08C3D23D9c",
+        "USDC": "0x69043055582d4d8ae331E12350f3a9A412ce0DcD",
+        "DAO": {
+            "daoAddress": "0x5637356b71650EEd241bc09579393561418196a4",
+            "pluginAddresses": [
+                {
+                    "multisig": "0xEE0f39319643089e811bED3853877b50E6BF8757"
+                },
+                {
+                    "vault": "0xFf179606FA9be2E74BE42A618Cf4C0f9d38A5820"
+                }
+            ]
+        }
+    }
+}
