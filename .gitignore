@@ -5,7 +5,7 @@ lcov.info
 coverage
 
 .env**
-
+.cast
 # dependencies
 /node_modules
 /.pnp
